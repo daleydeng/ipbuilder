@@ -6,7 +6,6 @@ sys.path.insert(0, cur_dir+'/../')
 from glob import glob
 from ipbuilder.bilibili import BilibiliUploader, VideoPart
 import toml
-
 import click
 
 def file_name(f):
@@ -15,9 +14,7 @@ def file_name(f):
 def check_length(name):
     assert len(name) < 76, f"name is too long: {name}:{len(name)}"
 
-def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=2, tid=208, tag='', desc='', source='course', jobs=1):
-
-    check_length(title)
+def main(video_f: str, bvid: str, cfg_f='~/.config/bilibili.toml'):
 
     cfg_f = osp.expanduser(cfg_f)
     assert osp.exists(cfg_f)
@@ -25,33 +22,22 @@ def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=2, t
 
     username = cfg['username']
     password = cfg['password']
-    if not desc:
-        desc = title
-
     uploader = BilibiliUploader()
     uploader.login(username=username, password=password)
-    jobs = int(jobs)
+
     parts = []
-    for video_f in sorted(glob(src_d+'/*.mp4')):
-        name = file_name(video_f)
+    name = file_name(video_f)
+    check_length(name)
+    vid = VideoPart(
+        path=video_f,
+        title=name,
+        desc=name,
+    )
+    parts.append(vid)
 
-        check_length(name)
-        vid = VideoPart(
-            path=video_f,
-            title=name,
-            desc=name,
-        )
-        parts.append(vid)
-
-    avid, bvid = uploader.upload(
+    uploader.edit(
+        bvid=bvid,
         parts=parts,
-        copyright=copyright,
-        title=title,
-        tid=tid,
-        tag=tag,
-        desc=desc,
-        source=source,
-        thread_pool_workers=jobs,
     )
 
 if __name__ == "__main__":
