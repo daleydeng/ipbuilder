@@ -15,7 +15,7 @@ def file_name(f):
 def check_length(name):
     assert len(name) < 76, f"name is too long: {name}:{len(name)}"
 
-def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=2, tid=208, tag='', desc='', source='course', jobs=1):
+def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=1, tid=208, tag='', desc='', source='course', jobs=1):
 
     check_length(title)
 
@@ -43,6 +43,10 @@ def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=2, t
         )
         parts.append(vid)
 
+    kws = {}
+    if copyright==2:
+        kws['source'] = source
+
     avid, bvid = uploader.upload(
         parts=parts,
         copyright=copyright,
@@ -50,7 +54,6 @@ def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=2, t
         tid=tid,
         tag=tag,
         desc=desc,
-        source=source,
         thread_pool_workers=jobs,
     )
 

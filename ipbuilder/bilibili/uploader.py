@@ -487,6 +487,7 @@ def upload(access_token,
         aid: av号
         bvid: bv号
     """
+    copyright = int(copyright)
     if not isinstance(parts, list):
         parts = [parts]
 
@@ -519,14 +520,22 @@ def upload(access_token,
         'copyright': copyright,
         'cover': cover,
         'desc': desc,
-        'no_reprint': no_reprint,
         'open_elec': open_elec,
-        'source': source,
         'tag': tag,
         'tid': tid,
         'title': title,
         'videos': []
     }
+    if copyright == 2:
+        post_data.update({
+            'source': source,
+            'no_reprint': 0,
+        })
+    else:
+        post_data.update({
+            'no_reprint': 1,
+        })
+
     for video_part in parts:
         post_data['videos'].append({
             "desc": video_part.desc,
@@ -538,6 +547,8 @@ def upload(access_token,
         'access_key': access_token,
     }
     params['sign'] = sign_dict(params, APPSECRET)
+
+    print (params, post_data)
     r = requests.post(
         url="http://member.bilibili.com/x/vu/client/add",
         params=params,
