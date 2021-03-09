@@ -44,7 +44,7 @@ def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=1, t
         parts.append(vid)
 
     kws = {}
-    if copyright==2:
+    if int(copyright) == 2:
         kws['source'] = source
 
     avid, bvid = uploader.upload(
@@ -55,6 +55,7 @@ def main(src_d: str, title: str, cfg_f='~/.config/bilibili.toml', copyright=1, t
         tag=tag,
         desc=desc,
         thread_pool_workers=jobs,
+        **kws,
     )
 
 if __name__ == "__main__":
